@@ -15,6 +15,9 @@ import Guestbook from './components/Guestbook';
 import './components/Guestbook.css';
 import Contact from './components/Contact';
 import './components/Contact.css';
+import Journal from './components/Journal';
+import './components/Journal.css';
+
 function App() {
   return (
     <div>
@@ -26,6 +29,7 @@ function App() {
       <Experience />
       <Guestbook />
       <Contact />
+      <Journal />
     </div>
   );
 }
