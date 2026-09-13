@@ -1,0 +1,48 @@
+:root{
+  --void: #0B0E1A;
+  --panel: #141830;
+  --panel-2: #1B2040;
+  --chalk: #F5F1E8;
+  --ink: #E9E9F2;
+  --ink-dim: #9A9FBD;
+  --ink-on-light: #14172A;
+  --ink-on-light-dim: #565C7A;
+
+  --ch-l: #FF3E7F;
+  --ch-r: #00E0C6;
+  --ch-l-deep: #C81F5D;
+  --ch-r-deep: #00897A;
+
+  --display: 'Unbounded', sans-serif;
+  --body: 'Inter', sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+
+  --maxw: 1180px;
+
+  /* editorial type scale — deliberately huge headlines, tiny labels, big jump between */
+  --text-display: clamp(3.2rem, 9vw, 8rem);
+  --text-h2: clamp(2.2rem, 5.5vw, 4.2rem);
+  --text-eyebrow: 12px;
+  --text-body: 18px;
+}
+
+*{ box-sizing: border-box; margin:0; padding:0; }
+html{ scroll-behavior: smooth; }
+body{
+  background: var(--void);
+  color: var(--ink);
+  font-family: var(--body);
+  line-height: 1.5;
+  overflow-x: hidden;
+}
+a{ color: inherit; text-decoration:none; }
+img{ max-width:100%; display:block; }
+::selection{ background: var(--ch-l); color: var(--void); }
+
+:focus-visible{
+  outline: 2px solid var(--ch-r);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.wrap{ max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }

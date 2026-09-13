@@ -1,0 +1,21 @@
+section.experience{ background: var(--void); padding: 130px 0; }
+.exp-head .section-label{ color: var(--ch-r); }
+.exp-head .section-label::before{ background: var(--ch-r); }
+.exp-head{ margin-bottom: 60px; }
+
+.track{ position: relative; padding-left: 32px; }
+.track::before{
+  content:''; position:absolute; left:0; top:6px; bottom:6px; width:2px;
+  background: linear-gradient(180deg, var(--ch-l), var(--ch-r));
+}
+.exp-item{ position:relative; padding-bottom: 48px; }
+.exp-item:last-child{ padding-bottom:0; }
+.exp-item::before{
+  content:''; position:absolute; left:-37px; top:5px; width:12px; height:12px;
+  border-radius:50%; background: var(--void); border: 2px solid var(--ch-r);
+}
+.exp-top{ display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; margin-bottom:6px;}
+.exp-role{ font-family: var(--display); font-weight:700; font-size: 1.2rem; }
+.exp-date{ font-family: var(--mono); font-size: 12px; color: var(--ink-dim); }
+.exp-co{ color: var(--ch-r); font-size: 14px; margin-bottom: 10px; font-weight:500; }
+.exp-desc{ color: var(--ink-dim); font-size: 15px; max-width: 64ch; }
