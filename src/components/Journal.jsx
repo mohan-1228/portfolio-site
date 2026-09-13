@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
-const API_URL = 'https://ur46n7cizfhn7pnk3t5rbkkm24.appsync-api.us-east-1.amazonaws.com/graphql';
-const API_KEY = 'da2-ncfm2tsouvfjfkvvpakgbbvvay';
+const API_URL = 'https://ivsuxz3r2fferiqson4gipokyy.appsync-api.us-east-1.amazonaws.com/graphql';
+const API_KEY = 'da2-77opzohqpnfpvkerckngumjtn4';
 
 async function gqlRequest(query, variables) {
   const res = await fetch(API_URL, {

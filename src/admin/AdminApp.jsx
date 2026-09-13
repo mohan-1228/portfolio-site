@@ -2,10 +2,6 @@ import { useEffect, useState } from 'react';
 import { Amplify } from 'aws-amplify';
 import { signIn, signOut, getCurrentUser } from 'aws-amplify/auth';
 import { generateClient } from 'aws-amplify/data';
-import outputs from '../../amplify_outputs.json';
-
-Amplify.configure(outputs);
-const client = generateClient({ authMode: 'userPool' });
 
 function stripHtml(html) {
   const div = document.createElement('div');
@@ -14,6 +10,7 @@ function stripHtml(html) {
 }
 
 function AdminApp() {
+  const [configReady, setConfigReady] = useState(false);
   const [user, setUser] = useState(null);
   const [checkingSession, setCheckingSession] = useState(true);
   const [email, setEmail] = useState('');
@@ -27,9 +24,21 @@ function AdminApp() {
   const [saving, setSaving] = useState(false);
   const [editingId, setEditingId] = useState(null);
 
+  // Load backend config at runtime (works in any environment — local, sandbox, or production)
+  // and only THEN create the data client, since it needs Amplify.configure() to have run first.
   useEffect(() => {
-    checkSession();
+    fetch('/amplify_outputs.json')
+      .then(res => res.json())
+      .then(outputs => {
+        Amplify.configure(outputs);
+        window.__journalClient = generateClient({ authMode: 'userPool' });
+        setConfigReady(true);
+      });
   }, []);
+
+  useEffect(() => {
+    if (configReady) checkSession();
+  }, [configReady]);
 
   useEffect(() => {
     if (user) loadEntries();
@@ -49,7 +58,7 @@ function AdminApp() {
   async function loadEntries() {
     setLoadingEntries(true);
     try {
-      const { data } = await client.models.JournalEntry.list();
+      const { data } = await window.__journalClient.models.JournalEntry.list();
       const sorted = [...data].sort((a, b) => new Date(b.date) - new Date(a.date));
       setEntries(sorted);
     } catch (err) {
@@ -102,9 +111,9 @@ function AdminApp() {
     setSaving(true);
     try {
       if (editingId) {
-        await client.models.JournalEntry.update({ id: editingId, ...form });
+        await window.__journalClient.models.JournalEntry.update({ id: editingId, ...form });
       } else {
-        await client.models.JournalEntry.create(form);
+        await window.__journalClient.models.JournalEntry.create(form);
       }
       resetForm();
       await loadEntries();
@@ -118,11 +127,15 @@ function AdminApp() {
   async function handleDelete(id) {
     if (!confirm('Delete this entry permanently?')) return;
     try {
-      await client.models.JournalEntry.delete({ id });
+      await window.__journalClient.models.JournalEntry.delete({ id });
       await loadEntries();
     } catch (err) {
       console.error('Delete failed:', err);
     }
+  }
+
+  if (!configReady) {
+    return <div className="admin-loading">Loading configuration…</div>;
   }
 
   if (checkingSession) {
@@ -178,16 +191,16 @@ function AdminApp() {
           </div>
           <div className="admin-toggle-row">
             <label className="admin-toggle">
-                <input
+              <input
                 type="checkbox"
                 checked={form.isPublic}
                 onChange={e => updateField('isPublic', e.target.checked)}
-                />
-                <span className="admin-toggle-track"></span>
-                <span className="admin-toggle-thumb"></span>
+              />
+              <span className="admin-toggle-track"></span>
+              <span className="admin-toggle-thumb"></span>
             </label>
             <span>Make this entry public (visible on the site)</span>
-            </div>
+          </div>
           <div className="admin-editor-actions">
             <button className="submit-btn" type="submit" disabled={saving}>
               {saving ? 'Saving…' : editingId ? 'Update entry' : 'Save entry'}
@@ -206,14 +219,14 @@ function AdminApp() {
             <div className="admin-entry-row" key={entry.id}>
               <div>
                 <div className="admin-entry-title">
-                    {entry.title}
-                    <span className={`admin-badge ${entry.isPublic ? 'public' : 'private'}`}>
+                  {entry.title}
+                  <span className={`admin-badge ${entry.isPublic ? 'public' : 'private'}`}>
                     {entry.isPublic ? 'Public' : 'Private'}
-                    </span>
+                  </span>
                 </div>
                 <div className="admin-entry-date">{entry.date}</div>
                 <div className="admin-entry-preview">{stripHtml(entry.content)}</div>
-                </div>
+              </div>
               <div className="admin-entry-actions">
                 <button onClick={() => startEdit(entry)}>Edit</button>
                 <button onClick={() => handleDelete(entry.id)} className="admin-delete-btn">Delete</button>
